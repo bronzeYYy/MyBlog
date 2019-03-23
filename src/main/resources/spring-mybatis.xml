@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:content="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <content:component-scan base-package="com.blog.service"/>
+  <!--数据库连接配置文件-->
+  <content:property-placeholder location="classpath:jdbc.properties"/>
+  <!--数据库连接配置-->
+  <bean id="jdbc" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    <property name="jdbcUrl" value="${jdbc.url}"/>
+    <property name="user" value="${jdbc.user}"/>
+    <property name="password" value="${jdbc.password}"/>
+    <property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}"/>
+    <property name="checkoutTimeout" value="${c3p0.checkoutTimeout}"/>
+    <property name="driverClass" value="${jdbc.driver}"/>
+    <property name="maxPoolSize" value="${c3p0.maxPoolSize}"/>
+    <property name="minPoolSize" value="${c3p0.minPoolSize}"/>
+    <property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}"/>
+  </bean>
+
+  <!--配置sqlSessionFactory-->
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <!--上面的数据库连接配置的id-->
+    <property name="dataSource" ref="jdbc"/>
+    <!--mybatis配置文件-->
+    <property name="configLocation" value="classpath:mybatis-config"/>
+    <!--dao的实现文件-->
+    <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+  </bean>
+
+  <!--配置扫描dao注入spring-->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    <property name="basePackage" value="com.blog.dao"/>
+  </bean>
+  <!--配置事物管理器-->
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="jdbc"/>
+  </bean>
+</beans>

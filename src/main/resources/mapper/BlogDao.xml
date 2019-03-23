@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.dao.BlogDao">
+  <select id="getBlogCount" resultType="int">
+    select count(id) from blog
+  </select>
+  <select id="getBlogsByLimit" resultType="com.blog.model.Blog">
+    select * from blog where status = 1 order by pub_time desc limit #{0}, #{1}
+  </select>
+  <insert id="insertBlog">
+    insert into blog (title, content, pub_time, user_id, type, status) values (#{title}, #{content}, #{pubTime}, #{userId}, #{type}, #{status})
+  </insert>
+  <select id="getBlogById" resultType="com.blog.model.Blog">
+    select * from blog where id = #{id}
+  </select>
+  <select id="getBlogsByLimitAndUserId" resultType="com.blog.model.Blog">
+    select * from blog where user_id = #{0} and status = #{1} order by pub_time desc limit #{2}, #{3}
+  </select>
+  <select id="getBlogCountByUserId" resultType="int">
+    select count(id) from blog where user_id = #{0} and status = #{1}
+  </select>
+  <update id="updateBlog" parameterType="com.blog.model.Blog">
+    update blog set title = #{title}, content = #{content}, type = #{type}, status = #{status} where id = #{id}
+  </update>
+  <delete id="deleteBlog">
+    delete from blog where user_id = #{0} and id = #{1}
+  </delete>
+</mapper>
